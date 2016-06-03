@@ -111,9 +111,11 @@ class message_parsing_thread(threading.Thread):
 #Start message_parser_thread
 threadID = 1;
 tx_thread = message_parsing_thread(threadID, queueLock, workQueue)
+tx_thread.daemon=True
 tx_thread.start()
 threadID = threadID +1;
 rx_thread = command_thread(threadID)
+rx_thread.daemon=True
 rx_thread.start()
 
 counter = 0
@@ -140,4 +142,5 @@ while True:
     except IOError:
         # most likely a signal during readline
         pass
-
+    except SystemExit:
+        logging.warning('SystemExit Caught, quitting')

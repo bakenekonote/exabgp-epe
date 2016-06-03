@@ -1,0 +1,6 @@
+curl --form "command=withdraw flow route testflow1 { match { source 10.0.0.0/24; destination 10.0.1.0/24; destination-port =80; protocol tcp; } then { discard; } } " http://localhost:5000/
+curl --form "command=announce flow route testflow1 { match { source 50.0.0.0/24; destination 10.0.1.0/24; destination-port =80; protocol tcp; } then { redirect 65001:4134; } }" http://localhost:5000/
+curl --form "command=withdraw flow route testflow1 { match { source 50.0.0.0/24; destination 10.0.1.0/24; destination-port =80; protocol tcp; } then { redirect 65001:4134; } }" http://localhost:5000/
+
+mosquitto_pub -t "exabgp/command" -m '{"command":"announce flow route testflow1 { match { source 50.0.0.0/24; destination 10.0.1.0/24; destination-port =80; protocol tcp; } then { redirect 65001:4134; } }"}'
+mosquitto_pub -t "exabgp/command" -m '{"command":"withdraw flow route testflow1 { match { source 50.0.0.0/24; destination 10.0.1.0/24; destination-port =80; protocol tcp; } then { redirect 65001:4134; } }"}'
